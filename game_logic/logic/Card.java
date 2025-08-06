@@ -1,8 +1,11 @@
 package logic;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Card {
+public class Card implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	private String value;
 	private String suit;
 	public String getValue() {
@@ -25,5 +28,10 @@ public class Card {
 
     public String getImagePath() {
         return "GUI/src/images/" + value + suit + ".png";
+    }
+    
+    @Override
+    public String toString() {
+        return value + " of " + suit;
     }
 }

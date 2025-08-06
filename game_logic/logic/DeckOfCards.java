@@ -1,10 +1,15 @@
 package logic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DeckOfCards {
+import test.Card;
+
+public class DeckOfCards implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
     private List<Card> playerDeck = new ArrayList<>();
     private List<Card> computerDeck = new ArrayList<>();
     private String[] suits = {"Club", "Diamond", "Heart", "Spade"};
@@ -44,6 +49,14 @@ public class DeckOfCards {
 
     private int compareCards(Card card1, Card card2) {
         return Integer.compare(card1.getNumericValue(), card2.getNumericValue());
+    }
+    
+    public List<Card> getPlayerDeck() {
+        return playerDeck;
+    }
+
+    public List<Card> getComputerDeck() {
+        return computerDeck;
     }
     //TODO: Add a war game class and make the methods for the game
     // Add start a round and start a game classes
