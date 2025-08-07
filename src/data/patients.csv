@@ -1,0 +1,5 @@
+name,username,password,email,address,telephone
+John Doe,johndoe,password123,john@example.com,123 Main Street,1234567890
+Jane Smith,jsmith,pass456789,jane@example.com,456 Park Avenue,9876543210
+
+Test Patient,testpatient,password123,test@example.com,Test Address,9876543210

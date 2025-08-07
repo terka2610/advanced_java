@@ -1,0 +1,7 @@
+name,username,password,role
+Dr. Smith,drsmith,doctor123,dentist
+John Admin,jadmin,admin456,administrator
+Mary Assistant,massist,assist789,assistant
+Reception1,recep1,recep123,receptionist
+
+Test Employee,testemployee,password123,assistant
