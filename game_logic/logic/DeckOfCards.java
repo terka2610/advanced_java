@@ -2,10 +2,7 @@ package logic;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import test.Card;
 
 public class DeckOfCards implements Serializable {
 	
@@ -24,7 +21,7 @@ public class DeckOfCards implements Serializable {
         }
     }
 
-    private void initializeDeck() {
+    void initializeDeck() {
         playerDeck.clear();
         computerDeck.clear();
         List<Card> fullDeck = new ArrayList<>();
@@ -47,7 +44,7 @@ public class DeckOfCards implements Serializable {
         }
     }
 
-    private int compareCards(Card card1, Card card2) {
+    int compareCards(Card card1, Card card2) {
         return Integer.compare(card1.getNumericValue(), card2.getNumericValue());
     }
     
