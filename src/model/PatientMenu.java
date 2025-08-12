@@ -82,10 +82,19 @@ public class PatientMenu {
         String dateTimeStr = scanner.nextLine();
         try {
             LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
-            calendar.removeAppointment(patient, dateTime);
-            System.out.println("Appointment cancelled successfully.");
+            boolean appointmentFound = appointments.stream()
+                .anyMatch(a -> a.getPatient().equals(patient) && a.getDateTime().equals(dateTime));
+            if (appointmentFound) {
+                if (calendar.removeAppointment(patient, dateTime)) {
+                    System.out.println("Appointment cancelled successfully.");
+                } else {
+                    System.out.println("Failed to cancel appointment. Please try again.");
+                }
+            } else {
+                System.out.println("No matching appointment found for the given date and time.");
+            }
         } catch (Exception e) {
-            System.out.println("Invalid date/time format or appointment not found.");
+            System.out.println("Invalid date/time format. Please use yyyy-MM-dd HH:mm (e.g., 2025-08-12 21:49).");
         }
     }
 

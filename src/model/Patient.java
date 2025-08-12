@@ -62,6 +62,12 @@ public class Patient extends Person{
 		return "Patient [name=" + name + ", username=" + username + ", password=" + password + 
 			   ", email=" + email + ", address=" + address + ", telephone=" + telephone + "]";
 	}
+
+
+    public Object getId() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getId'");
+    }
 	
 	
 	

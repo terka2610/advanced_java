@@ -60,18 +60,23 @@ public class EmployeeMenu {
 
     public void checkName(Calendar calendar) {
         System.out.print("Enter patient name to search: ");
-        String searchName = scanner.nextLine();
-        boolean found = false;
+        String searchName = scanner.nextLine().trim();
+        if (searchName.isEmpty()) {
+            System.out.println("Please enter a valid name.");
+            return;
+        }
 
-        for (Patient patient : calendar.getPatientList()) {
-            if (patient.getName().toLowerCase().contains(searchName.toLowerCase())) {
-                System.out.println(patient);
+        boolean found = false;
+        List<Patient> patients = calendar.getPatientList();
+        for (Patient patient : patients) {
+            if (patient.getName() != null && patient.getName().toLowerCase().contains(searchName.toLowerCase())) {
+                System.out.println("Found: Name=" + patient.getName() + ", ID=" + patient.getId());
                 found = true;
             }
         }
 
         if (!found) {
-            System.out.println("No patients found with that name.");
+            System.out.println("No patients found with name containing: " + searchName);
         }
     }
 
@@ -106,13 +111,13 @@ public class EmployeeMenu {
         }
     }
 
-    public void cancelAppointment(Calendar calendar) {
+   public void cancelAppointment(Calendar calendar) {
         System.out.print("Enter patient username: ");
-        String username = scanner.nextLine();
+        String username = scanner.nextLine().trim();
         Patient patient = findPatient(calendar, username);
 
         if (patient == null) {
-            System.out.println("Patient not found.");
+            System.out.println("Patient not found with username: " + username);
             return;
         }
 
@@ -122,8 +127,11 @@ public class EmployeeMenu {
         System.out.println("\nAppointments for " + patient.getName() + ":");
         for (Appointment appointment : appointments) {
             if (appointment.getPatient().equals(patient)) {
+                if (!hasAppointments) {
+                    System.out.println("Available Appointments to Cancel:");
+                    hasAppointments = true;
+                }
                 System.out.println("Date/Time: " + appointment.getDateTime().format(formatter));
-                hasAppointments = true;
             }
         }
 
@@ -133,32 +141,48 @@ public class EmployeeMenu {
         }
 
         System.out.print("Enter appointment date/time to cancel (yyyy-MM-dd HH:mm): ");
-        String dateTimeStr = scanner.nextLine();
+        String dateTimeStr = scanner.nextLine().trim();
         try {
             LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
-            calendar.removeAppointment(patient, dateTime);
-            System.out.println("Appointment cancelled successfully.");
+            // Check if the appointment exists and is in the future
+            boolean appointmentFound = appointments.stream()
+                .anyMatch(a -> a.getPatient().equals(patient) && a.getDateTime().equals(dateTime));
+            if (appointmentFound) {
+                if (calendar.removeAppointment(patient, dateTime)) {
+                    System.out.println("Appointment cancelled successfully.");
+                } else {
+                    System.out.println("Failed to cancel appointment. Please try again.");
+                }
+            } else {
+                System.out.println("No matching appointment found for the given date and time.");
+            }
         } catch (Exception e) {
-            System.out.println("Invalid date/time format or appointment not found.");
+            System.out.println("Invalid date/time format. Please use yyyy-MM-dd HH:mm (e.g., 2025-08-12 21:51).");
         }
     }
 
     public void profilePatient(Calendar calendar, Patient patient) {
-        System.out.println("\n=== Patient Profile ===");
-        System.out.println("Name: " + patient.getName());
-        System.out.println("Username: " + patient.getUsername());
-        System.out.println("Email: " + patient.getEmail());
-        System.out.println("Address: " + patient.getAddress());
-        System.out.println("Telephone: " + patient.getTelephone());
+        if (patient == null) {
+            System.out.println("Patient data is unavailable.");
+            return;
+        }
 
-        // Show upcoming appointments
+        System.out.println("\n=== Patient Profile ===");
+        System.out.println("Name: " + (patient.getName() != null ? patient.getName() : "Not specified"));
+        System.out.println("Username: " + (patient.getUsername() != null ? patient.getUsername() : "Not specified"));
+        System.out.println("Email: " + (patient.getEmail() != null ? patient.getEmail() : "Not specified"));
+        System.out.println("Address: " + (patient.getAddress() != null ? patient.getAddress() : "Not specified"));
+        System.out.println("Telephone: " + (patient.getTelephone() != null ? patient.getTelephone() : "Not specified"));
         System.out.println("\nUpcoming Appointments:");
         boolean hasAppointments = false;
+        LocalDateTime now = LocalDateTime.now(); 
         for (Appointment appointment : calendar.getAppointments()) {
-            if (appointment.getPatient().equals(patient) && 
-                appointment.getDateTime().isAfter(LocalDateTime.now())) {
+            if (appointment.getPatient().equals(patient) && appointment.getDateTime().isAfter(now)) {
+                if (!hasAppointments) {
+                    System.out.println("Future Appointments:");
+                    hasAppointments = true;
+                }
                 System.out.println("Date/Time: " + appointment.getDateTime().format(formatter));
-                hasAppointments = true;
             }
         }
         if (!hasAppointments) {
@@ -167,8 +191,11 @@ public class EmployeeMenu {
     }
 
     private Patient findPatient(Calendar calendar, String username) {
+        if (username == null || username.trim().isEmpty()) {
+            return null;
+        }
         for (Patient patient : calendar.getPatientList()) {
-            if (patient.getUsername().equals(username)) {
+            if (patient.getUsername() != null && patient.getUsername().equals(username.trim())) {
                 return patient;
             }
         }
